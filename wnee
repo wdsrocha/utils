@@ -1,0 +1,43 @@
+#!/bin/bash
+#
+# Records and replays commands from mouse and keyboard.
+#
+# Usage: ${0} [ACTION] [filename]
+#
+# Action:
+#   record - Tracks commands until q is pressed
+#   replay - Repeats commands from a file
+
+function usage() {
+  cat << EOF >&2
+
+  Records and replays commands from mouse and keyboard.
+  
+  Usage: ${0} [ACTION] [filename]
+
+  Action:
+    record - Tracks commands until q is pressed
+    replay - Repeats commands from a file
+EOF
+}
+
+action="${1}"
+if [[ -z "${action}" ]]; then
+  usage
+  exit 1
+fi
+
+filename="${2}"
+if [ -z "${filename}" ]; then
+  filename='default.xnl'
+fi
+
+if [[ "${action}" == "record" ]]; then
+  cnee --record --mouse --keyboard --time 3 --stop-key q -o "${filename}"
+elif [[ "${action}" == "replay" ]]; then
+  cnee --replay --mouse --keyboard --time 2 -f "${filename}"
+else
+  usage
+  exit 1
+fi
+
