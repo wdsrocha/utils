@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Description: Compile And Run a file
+
+filename="$1"
+fileroot="${filename%.*}"
+extension="${filename##*.}"
+
+# TODO: use temporary "randomized" file
+# tmp_dir=$(mktemp -d -t car-XXXXXXXXX)
+# output_filename="${tmp_dir}/output"
+
+# TODO: trap error 130
+# trap ctrl_c INT
+# ctrl_c() { rm -f "${output_filename}" }
+
+case "$extension" in
+  c)
+    rm -f a.out
+    gcc -static -O2 -lm "${filename}"
+    [[ -f a.out ]] && ./a.out
+    rm -f a.out
+    ;;
+  cpp)
+    rm -f a.out
+    g++ -std=c++14 -static -Wall -Wextra -Wconversion -Wfloat-equal -O2 -lm "${filename}"
+    [[ -f a.out ]] && ./a.out
+    rm -f a.out
+    ;;
+  kt)
+    jarfile="${fileroot}".jar
+    rm -rf META-INF AKt.class "${jarfile}"
+    kotlinc "${filename}" -include-runtime -d "${jarfile}"
+    [[ -f "${jarfile}" ]] && java -jar "${jarfile}"
+    rm -rf META-INF AKt.class "${jarfile}"
+    ;;
+  py)
+    python "${filename}"
+    ;;
+  *)
+    echo "Unknown file type."
+    ;;
+esac
+
